@@ -1,0 +1,190 @@
+[
+    {
+        "name": "Today's date",
+        "pcl_x": 1427,
+        "pcl_y": 1100,
+        "pdf_debugger_x": 160,
+        "pdf_debugger_y": 646
+    },
+    {
+        "name": "Firm name",
+        "pcl_y": 1339,
+        "pcl_x": 1337,
+        "pdf_debugger_x": 151,
+        "pdf_debugger_y": 623
+    },
+    {
+        "name": "Account Number",
+        "pcl_y": 1468,
+        "pcl_x": 1547,
+        "pdf_debugger_x": 172,
+        "pdf_debugger_y": 611
+    },
+    {
+        "name": "Policy Period",
+        "pcl_y": 1578,
+        "pcl_x": 1377,
+        "pdf_debugger_x": 154,
+        "pdf_debugger_y": 600
+    },
+    {
+        "name": "Expiration Date",
+        "pcl_y": 1339,
+        "pcl_x": 4104,
+        "pdf_debugger_x": 426,
+        "pdf_debugger_y": 624
+    },
+    {
+        "name": "Policy #",
+        "pcl_y": 1468,
+        "pcl_x": 3703,
+        "pdf_debugger_x": 388,
+        "pdf_debugger_y": 610
+    },
+    {
+        "name": "Cyber Retroactive Date",
+        "pcl_y": 1573,
+        "pcl_x": 4385,
+        "pdf_debugger_x": 455,
+        "pdf_debugger_y": 599
+    },
+    {
+        "name": "Underwriter",
+        "pcl_y": 1687,
+        "pcl_x": 3943,
+        "pdf_debugger_x": 412,
+        "pdf_debugger_y": 587
+    },
+    {
+        "name": "Option Table Column 1 Row 1",
+        "pcl_x": 2570,
+        "pcl_y": 4535,
+        "pdf_debugger_x": 274,
+        "pdf_debugger_y": 303
+    },
+    {
+        "name": "Option Table Column 1 Row 2",
+        "pcl_x": 2570,
+        "pcl_y": 4813,
+        "pdf_debugger_x": 274,
+        "pdf_debugger_y": 275
+    },
+    {
+        "name": "Option Table Column 1 Row 3",
+        "pcl_x": 2570,
+        "pcl_y": 5092,
+        "pdf_debugger_x": 274,
+        "pdf_debugger_y": 247
+    },
+    {
+        "name": "Option Table Column 2 Row 1",
+        "pcl_x": 3262,
+        "pcl_y": 4535,
+        "pdf_debugger_x": 343,
+        "pdf_debugger_y": 303
+    },
+    {
+        "name": "Option Table Column 2 Row 2",
+        "pcl_x": 3262,
+        "pcl_y": 4813,
+        "pdf_debugger_x": 343,
+        "pdf_debugger_y": 275
+    },
+    {
+        "name": "Option Table Column 2 Row 3",
+        "pcl_x": 3262,
+        "pcl_y": 5092,
+        "pdf_debugger_x": 343,
+        "pdf_debugger_y": 247
+    },
+    {
+        "name": "Option Table Column 3 Row 1",
+        "pcl_x": 3954,
+        "pcl_y": 4535,
+        "pdf_debugger_x": 413,
+        "pdf_debugger_y": 303
+    },
+    {
+        "name": "Option Table Column 3 Row 2",
+        "pcl_x": 3954,
+        "pcl_y": 4813,
+        "pdf_debugger_x": 413,
+        "pdf_debugger_y": 275
+    },
+    {
+        "name": "Option Table Column 3 Row 3",
+        "pcl_x": 3954,
+        "pcl_y": 5092,
+        "pdf_debugger_x": 413,
+        "pdf_debugger_y": 247
+    },
+    {
+        "name": "Option Table Column 4 Row 1",
+        "pcl_x": 4646,
+        "pcl_y": 4535,
+        "pdf_debugger_x": 481,
+        "pdf_debugger_y": 303
+    },
+    {
+        "name": "Option Table Column 4 Row 2",
+        "pcl_x": 4646,
+        "pcl_y": 4813,
+        "pdf_debugger_x": 481,
+        "pdf_debugger_y": 275
+    },
+    {
+        "name": "Option Table Column 4 Row 3",
+        "pcl_x": 4646,
+        "pcl_y": 5092,
+        "pdf_debugger_x": 481,
+        "pdf_debugger_y": 247
+    },
+    {
+        "name": "Ransomware (Bad)",
+        "pcl_x": 3803,
+        "pcl_y": 3487,
+        "pdf_debugger_x": 398,
+        "pdf_debugger_y": 409
+    },
+    {
+        "name": "Cyber Crime (Bad)",
+        "pcl_x": 4003,
+        "pcl_y": 3547,
+        "pdf_debugger_x": 416,
+        "pdf_debugger_y": 402
+    },
+    {
+        "name": "FL Tax (Bad)",
+        "pcl_x": 5292,
+        "pcl_y": 3647,
+        "pdf_debugger_x": 546,
+        "pdf_debugger_y": 392
+    },
+    {
+        "name": "Waiting Period (Bad)",
+        "pcl_x": 3703,
+        "pcl_y": 3647,
+        "pdf_debugger_x": 388,
+        "pdf_debugger_y": 393
+    },
+    {
+        "name": "Ransomware",
+        "pdf_debugger_x": 225,
+        "pdf_debugger_y": 402
+    },
+    {
+        "name": "Cyber Crime",
+        "pdf_debugger_x": 266,
+        "pdf_debugger_y": 389
+    },
+    {
+        "name": "FL Tax",
+        "pdf_debugger_x": 135,
+        "pdf_debugger_y": 220
+    },
+    {
+        "name": "Waiting Period",
+        "pdf_debugger_x": 197,
+        "pdf_debugger_y": 379
+    }
+]
