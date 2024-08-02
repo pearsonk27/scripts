@@ -74,14 +74,12 @@ def run_regression(x_array, y_array):
 @click.option(
     "--input-file-path",
     prompt="Input JSON file path:",
-    help="""Input JSON file path to train the model.
-        Data points without pcl coordinates will be outputted with them.""",
+    help="Input JSON file path to train the model. Data points without pcl coordinates will be outputted with them. Script output will be placed in same directory as the data.",
 )
 @click.option(
     "--file-handle-param",
     help="Parameter name in the coordinate set code.",
-    default="fpq",
-    show_default=True,
+    prompt="Parameter name in the coordinate set code.",
 )
 def convert_pcl_coordinates(input_file_path, file_handle_param):
     """
@@ -126,6 +124,19 @@ def convert_pcl_coordinates(input_file_path, file_handle_param):
         y_model.intercept_,
     )
     ## Build output file
+    build_output_file(
+        input_file_path, file_handle_param, coord_list, coordinate_predictor
+    )
+    ## Show plot
+    show_plot(
+        input_file_path, x_x, x_y, y_x, y_y, x_model, y_model, coordinate_predictor
+    )
+
+
+def build_output_file(
+    input_file_path, file_handle_param, coord_list, coordinate_predictor
+):
+    """Build the C Script coordinate adjustment and print statements for the pcl2pdf utility"""
     output_file_path = os.path.splitext(input_file_path)[0] + ".c"
     if os.path.exists(output_file_path):
         os.remove(output_file_path)
@@ -136,19 +147,18 @@ def convert_pcl_coordinates(input_file_path, file_handle_param):
             ):
                 code_addition = "//" + coord.name + "\n"
                 predicted_y = coordinate_predictor.get_predicted_pcl_y(coord)
-                code_addition += (
-                    f'mv_v("{predicted_y}", {file_handle_param});\n'
-                )
+                code_addition += f'mv_v("{predicted_y}", {file_handle_param});\n'
                 predicted_x = coordinate_predictor.get_predicted_pcl_x(coord)
-                code_addition += (
-                    f'mv_h("{predicted_x}", {file_handle_param});\n'
-                )
-                code_addition += (
-                    f'fprintf({file_handle_param}, "CHANGE ME!!");\n'
-                )
+                code_addition += f'mv_h("{predicted_x}", {file_handle_param});\n'
+                code_addition += f'fprintf({file_handle_param}, "CHANGE ME!!");\n'
                 code_file.write("\n")
                 code_file.write(code_addition)
-    ## Show plot
+
+
+def show_plot(
+    input_file_path, x_x, x_y, y_x, y_y, x_model, y_model, coordinate_predictor
+):
+    """Show a plot of how well the model fits the training data (if the model is bad you might've inputted bad data)"""
     y_plot_file_path = os.path.splitext(input_file_path)[0] + "_y.png"
     plt.scatter(y_x, y_y, color="red")
     plt.plot(
