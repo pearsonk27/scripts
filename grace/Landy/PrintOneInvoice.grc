@@ -1,0 +1,215 @@
+FILE cust IS "/usr2/inter/data/icustomer";
+FILE copr IS "/usr3/inter/data/coprod";
+FILE check IS "/usr2/inter/data/checks";
+FILE underw IS "/usr2/inter/data/underwriter";
+FILE ren_fol IS "/usr2/inter/data/renewali";
+FILE st IS "/usr2/inter/data/GAstate";
+FILE hist IS "/usr2/inter/data/histi";
+FILE endor IS "/usr2/inter/data/endors";
+
+FIELDS IN endor ARE
+    risk_num,   endors_date, chng_type, opt, loss_prem;
+
+FIELDS IN hist ARE
+    risk_num,   policy_num, limit_req, deductible;
+
+FIELDS IN st ARE
+    st_ind,   layer1, layer2, layer3, filing_date, apr_resident2, apr_commercial2, apr_zero_ded;
+
+FIELDS IN ren_fol ARE
+    risk_num, ltr1_mailed;
+
+FIELDS IN underw ARE
+    underwriter, phone, name_lower;
+
+FIELDS IN check ARE
+    risk_num, payment;
+
+FIELDS IN cust ARE
+    process_dec, process_process, process_chk, carrier,e_mail_addr,
+    zip2, city, risk_num, address, inception_date, underwriter, gender, limit_req, pad4,
+    deductible, rated_resident, on_app, first_name, copro_code,
+    last_name, firm_name, state, app_mailed_date, sub_class, policy_num, status,
+    prodcr_no, zip1, expiration_date, quote_date, pend1;
+
+FIELDS IN copr ARE
+    cpcode, cpname, cpnam2, cpstreet, cpmail, cpcity, cpstate, cpdca, cpdca_old, faxarea_code, fax_exchange, fax_extension,
+    solicit, email, cparea_code, cpexchange, cpextension, cpzip1, cpzip2;
+
+VARIABLES ARE  und_adr, i, prem, h_prem, aniv, green, counter, counter1,con1, con2, x,  tot, cnt_sub, PRINTIT, 
+    NBGA, per_lim, agg_lim, tot_tax, tot_prem, fin_prem, sol_email,homs001,mailDateL, new_prem, tax, surcharge;
+
+
+MAIN
+{
+    PRINTIT = "Y";
+    mailDateL = $MAILDATE;
+    SET PAGELENGTH = 61;
+    SET LASTLINE = 61;
+    SET PAGEWIDTH = 132;
+    PRINT "~P14";
+    SELECT FROM cust WHERE risk_num = $RISK;
+    FOR EACH cust 
+    DO detail;
+    PRINT NL,NL,"~~X";
+}
+
+PROCEDURE detail
+{
+    und_adr = "";
+    FIND copr WHERE cpcode = cust.copro_code;
+    FIND check WHERE check.risk_num = cust.risk_num;
+    FIND ren_fol WHERE ren_fol.risk_num = cust.risk_num;
+    FIND st WHERE st_ind = cust.state;
+
+    aniv = DATE(MONTH(cust.inception_date),DAY(cust.inception_date),YEAR(cust.inception_date)+1);
+
+    DO direct_invoice;
+}
+
+PROCEDURE  direct_invoice
+{
+    IF cpdca = "D"
+        counter = counter + 1;
+    ELSE
+        counter1 = counter1 + 1;
+
+    PRINT "&l1H"; 
+    PRINT "~~P16";
+    PRINT NL,NL,NL,NL,NL,NL,NL, TAB (5), cust.firm_name[1], TAB (80),"Date: ",mailDateL;
+  
+    IF cust.firm_name[2] != "" 
+        PRINT NL, TAB (5),cust.firm_name[2];
+    IF cust.firm_name[3] != ""
+        PRINT NL,TAB(5),cust.firm_name[3];
+    IF address[1] != "" 
+        PRINT NL, TAB (5), address[1];
+    IF address[2] != "" 
+        PRINT NL, TAB (5), address[2];
+    PRINT NL, TAB (5), city @ ", " @ cust.state, "   ",zip1; PRINT NL, NL;
+    PRINT NL,TAB(5),"Re: Real Estate Agents and Brokers Errors and Omissions Insurance";
+    PRINT NL,TAB(5),"    Expiring Policy Number: ",cust.policy_num, "    Expiration Date: ",cust.expiration_date;
+
+    PRINT NL,NL,TAB(5),"Dear ";
+    IF last_name != ""
+        PRINT first_name," "@last_name,",";
+    ELSE
+        PRINT "Insured:";
+
+    PRINT NL,NL,TAB(5),"Last year you elected the two (2) year policy option for your Real Estate Errors and Omissions ";
+    PRINT NL,TAB(5),"Insurance. Payment for the first policy year was credited to your policy last year.  The second policy ";
+    PRINT NL,TAB(5),"term is approaching.  No renewal application is required but payment for the second policy year is ";
+    PRINT NL,TAB(5),"needed to ensure continuation of your coverage. ";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"An invoice is attached for your review. Kindly forward premium payment with the attached invoice to";
+    PRINT NL,TAB(5),"Herbert H. Landy Insurance Agency, Inc., 100 River Ridge Drive, Suite 301, Norwood, MA 02062. Payment ";
+    PRINT NL,TAB(5),"must be received no later than ",aniv," to avoid cancellation. ";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"Should you wish to finance the premium we will need a minimum down payment of 20% with the ";
+    PRINT NL,TAB(5),"attached invoice.  There are 9 installments and the finance charge will vary depending on the amount ";
+    PRINT NL,TAB(5),"financed. Once the down payment is received we will forward a finance contract for your signature ";
+    PRINT NL,TAB(5),"and date. Failure to return the signed/dated finance contract by ",aniv," will result in cancellation ";
+    PRINT NL,TAB(5),"of your coverage.";
+    PRINT NL,NL,TAB(5),"You may also pay in full online at www.Landy.com in the Real Estate Agents and Brokers page. There is a";
+    PRINT NL,TAB(5),"convenience fee associated with this form of payment. ";
+    PRINT NL,TAB(5)," ";
+    PRINT NL,TAB(5),"Once payment is received and posted we will advise via email continuation of your coverage.";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"The management and staff at the Herbert H. Landy Insurance Agency values our relationship with you ";
+    PRINT NL,TAB(5),"and appreciate your continued business and support. Please do not hesitate to contact us at any time ";
+    PRINT NL,TAB(5),"for assistance.";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"Please read your policy and endorsements for policy coverage, terms, conditions and exclusions.";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"Regards,";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"Betsy A Magnuson";
+    PRINT NL,TAB(5),"President";
+    PRINT NL,TAB(5),"Program Administrator";
+    PRINT NL,TAB(5),"Encl/";
+
+    DO invoice;
+}
+
+PROCEDURE invoice
+{
+    DO set_taxes_surcharges;
+    aniv = DATE(MONTH(cust.inception_date),DAY(cust.inception_date),YEAR(cust.inception_date)+1);
+    PRINT ""; 
+    PRINT "&l5H";
+    PRINT NL,NL,NL, NL, NL;
+
+    PRINT "~~P10";
+    PRINT "~~B";
+    PRINT NL, NL, NL,NL, TAB (30),"PREMIUM INVOICE"; PRINT "~~P14";
+    PRINT NL, NL, NL;
+    PRINT NL,NL,NL,NL, TAB (5), cust.firm_name[1],"     ",cust.risk_num, TAB (80),"Date: ", mailDateL;
+  
+    IF cust.firm_name[2] != "" 
+        PRINT NL, TAB (5),cust.firm_name[2];
+    IF cust.firm_name[3] != ""
+        PRINT NL,TAB(5),cust.firm_name[3];
+    IF address[1] != "" 
+        PRINT NL, TAB (5), address[1];
+    IF address[2] != "" 
+        PRINT NL, TAB (5), address[2];
+    PRINT NL, TAB (5), city @ ", " @ cust.state, "   ",zip1; PRINT NL, NL;
+
+    PRINT NL,TAB(5),"Re: Real Estate Errors and Omissions Insurance";
+    PRINT NL,TAB(5),"    Expiring Policy Number: ",cust.policy_num, "    Policy Term: ",cust.inception_date," - ",cust.expiration_date;
+
+    PRINT NL,NL,NL,TAB(5),"    Premium Due Date: ",aniv;
+    PRINT NL,TAB(5),"    Premium:  $", check.payment / 2;
+    PRINT NL,TAB(5),"    State Taxes:  $", tax;
+    PRINT NL,TAB(5),"    State Surcharges/Fees:  $", surcharge:5:2;
+    PRINT NL,TAB(5),"    ";
+    PRINT NL,TAB(5),"    Total Premium Owed: $", (check.payment / 2) + tax + surcharge:10:2;
+    PRINT NL,TAB(5),"    ";
+    PRINT NL,TAB(5),"    Financing	  Yes_______ No _______";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"You can mail, email or fax using the attached premium payment options form to:";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"Herbert  H. Landy Insurance Agency, Inc.";
+    PRINT NL,TAB(5),"100 River Ridge Drive, Suite 301";
+    PRINT NL,TAB(5),"Norwood, MA 02062";
+    PRINT NL,TAB(5),"1-800-336-5422 -- phone";
+    PRINT NL,TAB(5),"1-800-344-5422 -- fax";
+    PRINT NL,TAB(5),"payments@landy.com -- email";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"";
+    PRINT NL,TAB(5),"For questions please feel free to contact our office for assistance. ";
+
+}
+
+PROCEDURE set_taxes_surcharges{
+    prem = payment / 2;
+    IF cust.state = "NJ" {
+        tax = 0.00;
+        IF cust.expiration_date > DATE(9, 30, 2024)
+            surcharge = prem * 0.003;
+        ELSE IF cust.expiration_date > DATE(9, 30, 2022)
+            surcharge = prem * 0.005;
+        ELSE IF cust.expiration_date > DATE(9, 30, 2016)
+            surcharge = prem * 0.006;
+        ELSE
+            surcharge = prem * 0.007;
+    }   
+    ELSE IF cust.state = "FL"
+    {
+        tax = 0.00;
+        IF cust.expiration_date > DATE(12, 31, 2023)
+        {
+            surcharge = prem * 0.01;
+        }
+        ELSE IF cust.expiration_date > DATE(9, 30, 2023)
+        {
+            surcharge = prem * 0.017;
+        }
+   }
+   ELSE IF cust.state = "WV"
+        tax = prem * 0.0055;
+}
