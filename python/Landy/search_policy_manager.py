@@ -4,25 +4,37 @@ import os
 from pathlib import Path
 import time
 
-DIRECTORY = "Y:\\Policy_Manager\\webdocs"
+DIRECTORY = "/volumes/pdf_files/Policy_Manager/webdocs"
 POLICY_NUMBERS = [
-    "3082824",
-    "4451088",
-    "3083622",
-    "4447688",
-    "4446190",
-    "4449418",
-    "4444437",
-    "3083032",
-    "3082662",
-    "4443869",
-    "3082144",
-    "3665555",
-    "3665303",
-    "3665464",
-    "4117348",
+    "3677877",
+    "3676838",
+    "3675388",
+    "3676439",
+    "3677672",
+    "3674331",
+    "3677981",
+    "3674893",
+    "3675605",
+    "3675523",
+    "3674652",
+    "3675265",
+    "3674788",
+    "3674680",
+    "3674322",
+    "3677639",
+    "3674462",
+    "3674371",
+    "3676183",
+    "3675312",
+    "3675147",
+    "3674228",
+    "3675241",
+    "3675066",
+    "3674493",
 ]
 
 #for path in Path(DIRECTORY).rglob(f"*{POLICY_NUMBERS[11]}*"):
-for path in Path(DIRECTORY).rglob("*4453782*"):
-    print(f"{path.absolute()} : {time.ctime(os.path.getctime(path))}")
+for key in POLICY_NUMBERS:
+    for path in Path(DIRECTORY).rglob(f"*DEC_*{key}*"):
+        path_string = path.absolute().as_posix().replace("/", "\\").replace("volumes", "\\ix200")
+        print(path_string)
