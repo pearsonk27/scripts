@@ -1,7 +1,7 @@
 select FILES.server_location as file_server_location,
     FILES.google_drive_location as file_google_drive_location,
     DDC."name" as column_name,
-    array_to_string( array_agg( distinct FORM_DIRS.server_path || '/' || CF."name" ), ', ' ) as forms
+    coalesce( array_to_string( array_agg( distinct FORM_DIRS.server_path || '/' || CF."name" ), ', ' ), 'Not Found' ) as forms
 from (
     values ('CPA_ACCT_HIST', 'actrisk'),
         ('CPA_ACCT_HIST', 'actin_date'), 
@@ -74,7 +74,7 @@ join (
         ('CPA_PRACTICE', '/usr3/inter/data/GApractice', 'CPA/GApractice.csv'),
         ('CPA_LEIN', '/usr3/inter/data/lein', 'CPA/lein.csv')
 ) FILES (conetic_data_file, server_location, google_drive_location) on REP.conetic_data_file = FILES.conetic_data_file
-left join data_definition DD on REP.conetic_data_file = DDC.conetic_data_file
+left join data_definition DD on REP.conetic_data_file = DD.conetic_data_file
 left join data_definition_column DDC on DD.id = DDC.data_definition_id and (DDC."name" = REP.column_name or DDC."name" like REP.column_name || '[%]')
 left join column_conetic_forms CCF on DDC.id = CCF.column_id
 left join conetic_form CF on CF.id = CCF.conetic_form_id
@@ -103,4 +103,4 @@ group by FILES.server_location,
     FILES.google_drive_location,
     DDC."name"
 order by FILES.google_drive_location,
-    DDC."name"
+    DDC."name";
