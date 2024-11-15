@@ -3,7 +3,7 @@ select FILES.server_location as file_server_location,
     DDC."name" as column_name,
     array_to_string( array_agg( distinct FORM_DIRS.server_path || '/' || CF."name" ), ', ' ) as forms
 from (
-    VALUES ('CPA_ACCT_HIST', 'actrisk'),
+    values ('CPA_ACCT_HIST', 'actrisk'),
         ('CPA_ACCT_HIST', 'actin_date'), 
         ('CPA_ACCT_HIST', 'carrier'),
         ('CPA_ACCT_HIST', 'actpolicy_num'),
@@ -67,7 +67,7 @@ from (
         ('CPA_LEIN', 'base_prem')
 ) REP (conetic_data_file, column_name)
 join (
-    VALUES ('CPA_ACCT_HIST', '/usr3/interacct/data/acctrxi', 'CPA_ACCOUNTING/acctrxi.csv'),
+    values ('CPA_ACCT_HIST', '/usr3/interacct/data/acctrxi', 'CPA_ACCOUNTING/acctrxi.csv'),
         ('CPA_HIST', '/usr3/inter/data/histi', 'CPA/histi.csv'),
         ('CPA_CUSTOMER', '/usr3/inter/data/icustomer', 'CPA/icustomer.csv'),
         ('CPA_GASLIDER', '/usr3/inter/data/GAslider', 'CPA/GAslider.csv'),
@@ -79,25 +79,25 @@ left join data_definition_column DDC on DD.id = DDC.data_definition_id and (DDC.
 left join column_conetic_forms CCF on DDC.id = CCF.column_id
 left join conetic_form CF on CF.id = CCF.conetic_form_id
 left join (
-    ('CPA_UNDERWRITER', '/usr3/inter/scr'),
-    ('RE_UNDERWRITER', '/usr2/inter/scr'),
-    ('RE_ACCOUNTING', '/usr2/interacct/scr'),
-    ('CPA_ACCOUNTING', '/usr3/interacct/scr'),
-    ('LAWYERS_UNDERWRITER', '/usr2/law/scr'),
-    ('LAWYERS_ACCOUNTING', '/usr2/law/accounting/scr'),
-    ('MISC_UNDERWRITER', '/usr3/misc/scr'),
-    ('MISC_ACCOUNTING', '/usr3/miscacct/scr'),
-    ('CPA_MGT', '/usr3/inter/mgt/scr'),
-    ('CPA_UTILITY', '/usr3/inter/rpt/UTILITY'),
-    ('RE_PROCESSING', '/usr2/inter/process/scr'),
-    ('LA_PROCESSING', '/usr2/law/process/scr'),
-    ('RE_GS_CLAIMS', '/usr2/inter/gsclaims/scr'),
-    ('CPA_IIG_CLAIMS', '/usr3/inter/iigclaim/scr'),
-    ('RE_NV_CLAIMS', '/usr2/inter/nvclaims/scr'),
-    ('RE_IIG_CLAIMS', '/usr2/inter/iigclaim/scr'),
-    ('RE_GA_CLAIMS', '/usr2/inter/gaclaims/scr'),
-    ('CPA_GS', '/usr3/inter/scr/GS'),
-    ('RE_GS', '/usr2/inter/scr/GS')
+    values ('CPA_UNDERWRITER', '/usr3/inter/scr'),
+        ('RE_UNDERWRITER', '/usr2/inter/scr'),
+        ('RE_ACCOUNTING', '/usr2/interacct/scr'),
+        ('CPA_ACCOUNTING', '/usr3/interacct/scr'),
+        ('LAWYERS_UNDERWRITER', '/usr2/law/scr'),
+        ('LAWYERS_ACCOUNTING', '/usr2/law/accounting/scr'),
+        ('MISC_UNDERWRITER', '/usr3/misc/scr'),
+        ('MISC_ACCOUNTING', '/usr3/miscacct/scr'),
+        ('CPA_MGT', '/usr3/inter/mgt/scr'),
+        ('CPA_UTILITY', '/usr3/inter/rpt/UTILITY'),
+        ('RE_PROCESSING', '/usr2/inter/process/scr'),
+        ('LA_PROCESSING', '/usr2/law/process/scr'),
+        ('RE_GS_CLAIMS', '/usr2/inter/gsclaims/scr'),
+        ('CPA_IIG_CLAIMS', '/usr3/inter/iigclaim/scr'),
+        ('RE_NV_CLAIMS', '/usr2/inter/nvclaims/scr'),
+        ('RE_IIG_CLAIMS', '/usr2/inter/iigclaim/scr'),
+        ('RE_GA_CLAIMS', '/usr2/inter/gaclaims/scr'),
+        ('CPA_GS', '/usr3/inter/scr/GS'),
+        ('RE_GS', '/usr2/inter/scr/GS')
 ) FORM_DIRS (conetic_form_directory, server_path) on CF.conetic_form_directory = FORM_DIRS.conetic_form_directory
 group by FILES.server_location,
     FILES.google_drive_location,
