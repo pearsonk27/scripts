@@ -1,16 +1,13 @@
 
-create table LAMS_Renewal_Solicitation (
-    mailstatus VARCHAR(50),
-    apptype VARCHAR(50),
-    state VARCHAR(10),
-    riskid VARCHAR(20),
-    firmname VARCHAR(255),
-    effectivedate DATE,
-    expirationdate DATE,
-    period VARCHAR(20),
-    currentpolicynumber VARCHAR(20)
+create table directlogin (
+    email VARCHAR(255),
+    password VARCHAR(255),
+    policynum VARCHAR(20),
+    polmonth VARCHAR(10),
+    polyear INT,
+    secid INT
 )
 
-COPY LAMS_Renewal_Solicitation
-FROM '/Users/kristoferpearson/Desktop/RenewalSolicitation_01-Nov-24_14_34.csv'
+COPY directlogin
+FROM '/Volumes/pdf_files/garf/Kris/Projects/AppraiserOnlineTransferFail_20241202/directlogin.csv'
 WITH CSV HEADER;
