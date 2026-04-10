@@ -1,0 +1,39 @@
+monitor:
+  db_path: monitor_state.sqlite3
+  output_root: "\\\\ix200\\pdf_files\\ONLINE_PURCHASING_FAILURES"
+  grace_hours: 2
+  first_run_lookback_hours: 24
+
+purchasing:
+  host: purchasing-server.example.com
+  port: 22
+  username: your_sftp_user
+  key_path: /path/to/private_key
+  password_env: PURCHASING_SFTP_PASSWORD
+  log_dir: /var/www/html/storage/logs
+  current_log_prefix: laravel.log
+
+processing:
+  base_path: "\\\\ix200\\pdf_files\\garf\\Scheduled-Jobs-Logs"
+  lobs:
+    - ga_apolar
+    - ga_reol
+    - ga_cpaol
+
+emailing:
+  host: emailing-server.example.com
+  port: 22
+  username: your_email_log_user
+  key_path: /path/to/private_key
+  password_env: EMAIL_SFTP_PASSWORD
+  log_dir: /home/sendmail/logs
+  file_prefix: send_policies_
+
+smtp:
+  host: smtp-relay.example.com
+  port: 25
+  username: ""
+  password_env: SMTP_PASSWORD
+  use_tls: false
+  from_email: purchasing-monitor@yourdomain.com
+  subject_prefix: "[Online Purchasing Monitor]"
