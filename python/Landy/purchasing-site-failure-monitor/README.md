@@ -78,6 +78,40 @@ Example cron:
 0 * * * * cd /path/to/purchasing-site-failure-monitor && /path/to/python purchasing_site_failure_monitor.py --emails ops@domain.com >> monitor.log 2>&1
 ```
 
+## Monthly Executive Summary
+
+Use the monthly script to email an executive summary for the previous month,
+including success/failure counts by LOB and CSV attachments.
+
+Command:
+
+```bash
+python monthly_executive_summary.py --emails ops@domain.com
+```
+
+Generated CSV files:
+
+- `summary_by_lob.csv`
+- `accounts_success.csv`
+- `accounts_failure.csv`
+
+By default, these are written to:
+
+- `./monthly-executive-reports/YYYY-MM/`
+
+Monthly scheduler example (first day at 06:00):
+
+```cron
+0 6 1 * * cd /path/to/purchasing-site-failure-monitor && /path/to/python monthly_executive_summary.py --emails ops@domain.com >> monthly-summary.log 2>&1
+```
+
+Optional flags:
+
+- `--as-of`: override period calculation (ISO date/datetime)
+- `--state-db`: override SQLite path
+- `--output-dir`: override CSV output root
+- `--dry-run`: generate reports without sending email
+
 ## Data and Evidence
 
 ### SQLite
