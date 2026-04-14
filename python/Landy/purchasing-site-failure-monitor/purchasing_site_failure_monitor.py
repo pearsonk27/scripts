@@ -583,16 +583,27 @@ def open_sftp_client(cfg: Dict[str, Any]) -> Tuple[paramiko.SSHClient, paramiko.
 
 def list_remote_files(sftp: paramiko.SFTPClient, directory: str) -> List[Tuple[str, int]]:
     """List remote files with mtime."""
+    LOGGER.debug("Listing remote directory: %s", directory)
     entries: List[Tuple[str, int]] = []
-    for attr in sftp.listdir_attr(directory):
-        entries.append((attr.filename, int(attr.st_mtime)))
+    try:
+        for attr in sftp.listdir_attr(directory):
+            LOGGER.debug("  Found: %s (mtime=%s)", attr.filename, attr.st_mtime)
+            entries.append((attr.filename, int(attr.st_mtime)))
+    except IOError as e:
+        LOGGER.error("Failed to list directory %s: %s", directory, e)
+        raise
     return entries
 
 
 def download_remote_file(sftp: paramiko.SFTPClient, remote_path: str, local_path: Path) -> None:
     """Download a remote file to local path."""
     local_path.parent.mkdir(parents=True, exist_ok=True)
-    sftp.get(remote_path, str(local_path))
+    LOGGER.debug("Downloading remote file: %s -> %s", remote_path, local_path)
+    try:
+        sftp.get(remote_path, str(local_path))
+    except IOError as e:
+        LOGGER.error("Failed to download %s: %s", remote_path, e)
+        raise
 
 
 def fetch_purchasing_logs(  # pylint: disable=too-many-locals

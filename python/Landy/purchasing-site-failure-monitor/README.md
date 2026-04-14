@@ -155,6 +155,79 @@ If no prior successful run is stored in SQLite, the monitor backfills the previo
 
 ## Troubleshooting
 
+### SFTP Permission Denied Error
+
+If you see `PermissionError: [Errno 13] Permission denied` during file download, follow these steps:
+
+#### Step 1: Test SFTP Connectivity
+
+Use the diagnostic script to identify the exact failing file:
+
+```bash
+python test_sftp_connection.py --config config.yaml --target purchasing
+python test_sftp_connection.py --config config.yaml --target emailing
+```
+
+This will:
+- Verify SSH/SFTP connection
+- List files in the remote directory
+- Attempt to read the first file
+- Report which step fails
+
+#### Step 2: Verify Remote Directory Exists
+
+The error typically means one of:
+
+1. **Directory path is wrong in config** — check `log_dir` in your `config.yaml`:
+   ```bash
+   sftp your_user@hosting.com
+   ls /var/www/html/storage/logs  # Should list files
+   ```
+
+2. **SFTP user lacks read permission** on the directory or files:
+   ```bash
+   # On the server
+   ls -ld /var/www/html/storage/logs
+   ls -l /var/www/html/storage/logs/*.log
+   # Check if SFTP user can read these
+   ```
+
+3. **The directory is empty** or has no matching files:
+   ```bash
+   # Verify files matching current_log_prefix exist
+   ls -l /var/www/html/storage/logs/laravel.log*
+   ```
+
+#### Step 3: Verify SFTP User Permissions
+
+Ensure the SFTP user has read permissions:
+
+```bash
+# As server admin
+sudo ls -l /var/www/html/storage/logs/
+sudo chmod g+rx /var/www/html/storage/logs  # If needed
+sudo chmod o+rx /var/www/html/storage/logs  # If needed
+```
+
+Or add the SFTP user to the appropriate group:
+
+```bash
+sudo usermod -aG www-data sftp_user  # If logs owned by www-data
+```
+
+#### Step 4: Run with Verbose Logging
+
+Enable debug output to see exactly which path fails:
+
+```bash
+python purchasing_site_failure_monitor.py \
+  --emails ops@domain.com \
+  --dry-run \
+  --verbose 2>&1 | grep -E "(Downloading|Failed|Error)"
+```
+
+### Other Common Issues
+
 - `Unable to connect` errors:
   - Verify host/username/key path
   - Confirm password env var exists if fallback auth is needed
