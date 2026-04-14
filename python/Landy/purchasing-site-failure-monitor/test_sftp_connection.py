@@ -169,3 +169,8 @@ def main():
         logger.error("✗ Test failed with error:")
         logger.error(str(e))
         logger.error("%s\n", sep)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
