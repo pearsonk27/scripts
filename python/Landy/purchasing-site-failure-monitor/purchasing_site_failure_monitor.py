@@ -37,12 +37,12 @@ SESSION_TRAILER_RE = re.compile(r"\s+(\{\"SessionID\":\"(?P<session>[^\"]+)\"\})
 
 PROCESSING_RE = re.compile(
     r"^(?P<ts>\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2})\s+\w+\s+(?P<lob>\S+)\s+\[[^\]]*\]\s+"
-    r"Processing Confirmation Number:\s*(?P<conf>[A-Za-z0-9]{8}),\s*Policy Number\s*(?P<policy>\S+)"
+    r"Processing Confirmation Number:\s*(?P<conf>[A-Za-z0-9]{8}),\s*Policy Number\s*(?P<policy>[A-Z]{3}\S{7}-\d{2})"
 )
 RISK_RE = re.compile(
     r"^(?P<ts>\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2})\s+\w+\s+(?P<lob>\S+)\s+\[[^\]]*\]\s+"
     r"Risk Number\s+(?P<risk>\S+)\s+assigned/found for Confirmation Number:\s*(?P<conf>[A-Za-z0-9]{8}),\s*"
-    r"Policy Number\s*(?P<policy>\S+)"
+    r"Policy Number\s*(?P<policy>[A-Z]{3}\S{7}-\d{2})"
 )
 RUNNING_RE = re.compile(r"^Running:\s+(?P<ts>.+)$")
 EMAIL_LINE_RE = re.compile(r"^Sending out Policy for:\s+(?P<risk>\S+)\s+-\s+(?P<kind>.+)$")
