@@ -142,6 +142,11 @@ def parse_arguments() -> argparse.Namespace:
         action="store_true",
         help="Enable detailed logging.",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Simulate the run without creating any output files.",
+    )
     return parser.parse_args()
 
 
@@ -334,15 +339,15 @@ def main() -> int:
         len(lookup),
     )
 
-    if results.not_found_count:
-        logger.warning(
+    if args.verbose and results.not_found_count:
+        logger.info(
             "%d RAB CA policy(s) not found on disk: %s",
             results.not_found_count,
             ", ".join(p.rab_full for p in results.not_found_policies),
         )
 
     # Phase 3 — Extract page 1 (declarations) from each matched PDF
-    results = phase3_extract_and_output(results)
+    results = phase3_extract_and_output(results, dry_run=args.dry_run)
 
     logger.info(
         "Final summary: %d succeeded, %d not found on disk, %d errors",
@@ -474,7 +479,7 @@ def phase2_locate_and_match(
         if rab_full not in seen_rab:
             results.not_found_count += 1
             results.not_found_policies.append(lookup[rab_full])
-            logger.warning("Policy %s not found on disk", rab_full)
+            logger.debug("Policy %s not found on disk", rab_full)
 
     return results
 
@@ -503,6 +508,7 @@ def build_output_path(source_path: Path) -> Path:
 
 def phase3_extract_and_output(
     results: ProcessingResults,
+    dry_run: bool = False,
 ) -> ProcessingResults:
     """Phase 3 — Extract only the declarations page (page 1, index 0) from each PDF.
 
@@ -517,13 +523,16 @@ def phase3_extract_and_output(
     ----------
     results : ProcessingResults
         Result object from Phase 2 with matched PDFs.
+    dry_run : bool
+        If True, log what *would* be done without creating or modifying any files.
 
     Returns
     -------
     ProcessingResults
         Updated results with output written and counters incremented.
     """
-    logger.info("Phase 3 — Declarations Page Extraction (always page 1)")
+    mode_label = "[DRY RUN]" if dry_run else ""
+    logger.info("Phase 3 — Declarations Page Extraction (always page 1) %s", mode_label)
     total = len(results.matched_pdfs)
 
     if total == 0:
@@ -586,6 +595,14 @@ def phase3_extract_and_output(
 
         # --- Create new single-declaration PDF ------------------------------
         try:
+            if dry_run:
+                logger.info(
+                    "[%d/%d] Would write output -> %s (1 page)",
+                    i, total, out_path.name,
+                )
+                results.success_count += 1
+                continue
+
             out_doc = fitz.open()  # blank document
 
             # Insert the first page into the new document
