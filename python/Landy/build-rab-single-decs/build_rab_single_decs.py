@@ -29,7 +29,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
-import fitz  # PyMuPDF
+import fitz
+from pendulum import datetime  # PyMuPDF
 
 
 # ---------------------------------------------------------------------------
@@ -70,8 +71,9 @@ PROD_FILE_RAB_PATTERN = re.compile(
 
 # Bare-code production filename pattern.
 # Filename contains only the 7-char bare code (no RAB prefix / -YY suffix).
+# Also captures the copro segment between DEC_ and the 7-char bare code.
 # Handles both "_DEC_xxx_BBB.pdf" and "DEC_CCC_aaaaaaa.pdf" file names.
-PATTERN_BARE_RAB = re.compile(r"(?:_|^)DEC_[^_]+_(\w{7})\.pdf$")
+PATTERN_BARE_RAB = re.compile(r"(?:_|^)DEC_([^_]+?)_(\w{7})\.pdf$")
 
 # Output prefix for single-dec files: replaces _DEC_ with _SINGLEDEC_
 SINGLEDEC_PREFIX = "_SINGLEDEC_"
@@ -431,10 +433,13 @@ def phase2_locate_and_match(
                     #    e.g. "something_DEC_xxx_3082940.pdf"
                     bm = PATTERN_BARE_RAB.search(fname)
                     if bm:
-                        bare_code = bm.group(1)  # e.g. '3082940'
+                        copro_segment = bm.group(1)  # e.g. 'CALI001'
+                        bare_code = bm.group(2)     # e.g. '3082940'
                         rab_full = bare_rab_lookup.get(bare_code)
                         if rab_full is not None:
-                            match_mode = "production"
+                            policy = lookup[rab_full]
+                            if hasattr(policy, 'copro_code') and copro_segment == policy.copro_code:
+                                match_mode = "production"
                         else:
                             logger.debug("Bare code '%s' in '%s' not found", bare_code, fname)
                             continue
@@ -557,8 +562,9 @@ def phase3_extract_and_output(
                 dst_mtime = out_path.stat().st_mtime
                 if dst_mtime >= src_mtime:
                     logger.info(
-                        "[%d/%d] Skipping %s (output is up-to-date)",
+                        "[%d/%d] Skipping %s (output is up-to-date), source: %s (%.1fs) -> dest: %s (%.1fs)",
                         i, total, out_path.name,
+                        source_path.resolve(), src_mtime, out_path.resolve(), dst_mtime,
                     )
                     results.success_count += 1
                     continue
