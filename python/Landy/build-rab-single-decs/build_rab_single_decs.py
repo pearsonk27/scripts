@@ -27,6 +27,7 @@ import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from datetime import datetime as dt_datetime
 from typing import Dict, List, Optional, Set, Tuple
 
 import fitz
@@ -440,6 +441,12 @@ def phase2_locate_and_match(
                             policy = lookup[rab_full]
                             if hasattr(policy, 'copro_code') and copro_segment == policy.copro_code:
                                 match_mode = "production"
+                            else:
+                                logger.debug(
+                                    "Copro mismatch for bare code '%s' in '%s': expected %s",
+                                    bare_code, fname, policy.copro_code
+                                )
+                                continue
                         else:
                             logger.debug("Bare code '%s' in '%s' not found", bare_code, fname)
                             continue
@@ -550,7 +557,7 @@ def phase3_extract_and_output(
 
         logger.info(
             "[%d/%d] Processing %s  [extracting page 1]",
-            i, total, source_path.name,
+            i, total, source_path,
         )
 
         out_path = build_output_path(source_path)
@@ -562,16 +569,17 @@ def phase3_extract_and_output(
                 dst_mtime = out_path.stat().st_mtime
                 if dst_mtime >= src_mtime:
                     logger.info(
-                        "[%d/%d] Skipping %s (output is up-to-date), source: %s (%.1fs) -> dest: %s (%.1fs)",
-                        i, total, out_path.name,
-                        source_path.resolve(), src_mtime, out_path.resolve(), dst_mtime,
+                        "[%d/%d] Skipping %s (output is up-to-date), source: %s (%s) -> dest: %s (%s)",
+                        i, total, out_path,
+                        source_path.resolve(), dt_datetime.fromtimestamp(src_mtime).strftime("%m/%d/%Y %H:%M:%S"),
+                        out_path.resolve(), dt_datetime.fromtimestamp(dst_mtime).strftime("%m/%d/%Y %H:%M:%S"),
                     )
                     results.success_count += 1
                     continue
         except OSError as exc:
             logger.warning(
                 "[%d/%d] Could not stat output file %s: %s",
-                (i, total, out_path.name, exc),
+                i, total, out_path, exc,
             )
             src_doc.close()
             results.error_count += 1
@@ -604,7 +612,7 @@ def phase3_extract_and_output(
             if dry_run:
                 logger.info(
                     "[%d/%d] Would write output -> %s (1 page)",
-                    i, total, out_path.name,
+                    i, total, out_path,
                 )
                 results.success_count += 1
                 continue
